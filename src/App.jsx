@@ -70,40 +70,52 @@ export default function App() {
     }
 
     try {
-      // Simulate async delay for demo
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Find product in DEMO data
-      const productKey = Object.keys(DEMO).find(key => key.toLowerCase().includes(q.toLowerCase()));
-      if (!productKey) {
-        throw new Error('No results found');
+      const response = await fetch(`http://localhost:5000/api/compare?q=${encodeURIComponent(q)}`);
+      if (!response.ok) {
+        throw new Error(`Server responded with ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (!data.platforms || data.platforms.length === 0) {
+        throw new Error('No deals found for this product');
       }
 
-      const demoData = DEMO[productKey];
-
-      // Transform demo data to match expected structure
-      const transformedPf = demoData.pf;
+      // Transform backend flat list to nested pf object structure
+      const pf = {};
       const bases = {};
-      Object.entries(transformedPf).forEach(([platform, data]) => {
-        if (data.p !== null) {
-          bases[platform] = data.p;
+      data.platforms.forEach(p => {
+        pf[p.platform] = {
+          p: p.price,
+          r: p.rating,
+          rv: p.reviews || 0,
+          of: p.offers || [],
+          emi: p.emi || null,
+          ship: p.freeShip || false,
+          ret: 7, // Default return policy
+          stock: true,
+          disc: p.discount || 0,
+          url: p.url || '#'
+        };
+        if (p.price) {
+          bases[p.platform] = p.price;
         }
       });
 
       const processedData = {
-        name: productKey,
-        img: demoData.img,
-        mrp: demoData.mrp,
-        cat: demoData.cat,
-        desc: demoData.desc,
-        pf: transformedPf,
+        name: data.name || q,
+        img: data.image,
+        mrp: data.mrp || 0,
+        cat: 'Price Comparison',
+        desc: `Live pricing and availability for ${data.name || q} across multiple platforms.`,
+        pf: pf,
         hist: genH(30, bases)
       };
 
       setSearchData(processedData);
       setStatus('complete');
     } catch (error) {
-      console.error(error);
+      console.error('Search error:', error);
       alert(`Search failed: ${error.message}`);
       setStatus('error');
     }

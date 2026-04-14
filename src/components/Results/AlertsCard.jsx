@@ -5,6 +5,7 @@ export default function AlertsCard({ avail, data }) {
   const [alerts, setAlerts] = useState({});
   const [notifs, setNotifs] = useState([]);
   const [email, setEmail] = useState('');
+  const [saving, setSaving] = useState(false);
   
   const user = JSON.parse(localStorage.getItem('user') || 'null');
   const token = localStorage.getItem('token');
@@ -17,6 +18,8 @@ export default function AlertsCard({ avail, data }) {
       alert('Please enter your email or log in to save alerts.');
       return;
     }
+
+    setSaving(true);
 
     for (const [k, d] of avail) {
       const thr = alerts[k];
@@ -48,6 +51,8 @@ export default function AlertsCard({ avail, data }) {
       }
     }
 
+    setSaving(false);
+
     if (n === 0) {
       alert('Enter at least one target price');
       return;
@@ -60,7 +65,7 @@ export default function AlertsCard({ avail, data }) {
   return (
     <div className="alerts-card" style={{ display: 'block' }}>
       <div className="card-hd">
-        <span className="card-hd-title">Price Alerts</span>
+        <span className="card-hd-title">🔔 Price Alerts</span>
         <span className="card-hd-sub">NOTIFY WHEN PRICE DROPS</span>
       </div>
       <div className="card-body">
@@ -74,7 +79,7 @@ export default function AlertsCard({ avail, data }) {
 
             return (
               <div key={k} className={`al-row ${fired ? 'fired' : watch ? 'watching' : ''}`}>
-                <div className="al-logo" style={{ background: pfc.s, border: `1px solid ${pfc.b}` }}>
+                <div className="al-logo" style={{ background: pfc.s, border: `1.5px solid ${pfc.b}` }}>
                   {pfc.em}
                 </div>
                 <div className="al-nm">
@@ -83,20 +88,29 @@ export default function AlertsCard({ avail, data }) {
                     Now ₹{typeof d?.p === 'number' ? d.p.toLocaleString('en-IN') : '—'}
                   </div>
                 </div>
-                <input
-                  className="al-inp"
-                  type="number"
-                  placeholder="₹ target"
-                  value={ex}
-                  onChange={(e) => {
-                    const nextValue = e.target.value;
-                    const parsed = nextValue === '' ? '' : Number(nextValue);
-                    setAlerts({
-                      ...alerts,
-                      [k]: nextValue === '' ? '' : Number.isFinite(parsed) ? parsed : ex,
-                    });
-                  }}
-                />
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                  <span style={{ 
+                    position: 'absolute', left: '10px', 
+                    fontFamily: 'var(--mono)', fontSize: '12px', 
+                    color: 'var(--ink4)', pointerEvents: 'none',
+                    zIndex: 1,
+                  }}>₹</span>
+                  <input
+                    className="al-inp"
+                    type="number"
+                    placeholder="target"
+                    value={ex}
+                    style={{ paddingLeft: '22px' }}
+                    onChange={(e) => {
+                      const nextValue = e.target.value;
+                      const parsed = nextValue === '' ? '' : Number(nextValue);
+                      setAlerts({
+                        ...alerts,
+                        [k]: nextValue === '' ? '' : Number.isFinite(parsed) ? parsed : ex,
+                      });
+                    }}
+                  />
+                </div>
                 {fired && (
                   <span
                     className="al-badge"
@@ -111,19 +125,38 @@ export default function AlertsCard({ avail, data }) {
         </div>
         
         {!user && (
-          <div style={{ marginBottom: '16px', marginTop: '16px' }}>
+          <div style={{ marginBottom: '20px', marginTop: '4px' }}>
+            <label style={{ 
+              display: 'block', marginBottom: '8px', fontSize: '12px', 
+              color: 'var(--ink3)', fontWeight: '600', fontFamily: 'var(--mono)',
+              letterSpacing: '.04em',
+            }}>
+              📧 EMAIL FOR ALERTS
+            </label>
             <input 
               type="email" 
               placeholder="Enter your email to receive alerts" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1.5px solid var(--line)', backgroundColor: 'var(--off)', color: 'var(--ink)' }}
+              style={{ 
+                width: '100%', padding: '12px 16px', borderRadius: 'var(--r-xs)', 
+                border: '1.5px solid var(--line)', backgroundColor: 'var(--off)', 
+                color: 'var(--ink)', fontFamily: 'var(--sans)', fontSize: '14px',
+                outline: 'none', transition: 'border-color .2s',
+              }}
+              onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+              onBlur={(e) => e.target.style.borderColor = 'var(--line)'}
             />
           </div>
         )}
 
-        <button className="save-alerts-btn" onClick={saveAlerts}>
-          SAVE ALL ALERTS →
+        <button 
+          className="save-alerts-btn" 
+          onClick={saveAlerts}
+          disabled={saving}
+          style={saving ? { opacity: 0.7, cursor: 'not-allowed' } : {}}
+        >
+          {saving ? '⏳ SAVING...' : '🔔 SAVE ALL ALERTS →'}
         </button>
         <div className="notifs">
           {notifs.map((n, i) => {

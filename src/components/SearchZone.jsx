@@ -38,6 +38,7 @@ export default function SearchZone({ activePF, togglePF, onSearch }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            id="search-input"
           />
           {query && (
             <button
@@ -51,7 +52,7 @@ export default function SearchZone({ activePF, togglePF, onSearch }) {
             </button>
           )}
           <div className="search-sep"></div>
-          <button className="search-btn" onClick={handleSearch}>
+          <button className="search-btn" id="search-btn" onClick={handleSearch}>
             COMPARE →
           </button>
         </div>
@@ -69,21 +70,21 @@ export default function SearchZone({ activePF, togglePF, onSearch }) {
               >
                 <div
                   className="dot"
-                  style={{ background: 'rgba(255,255,255,.8)' }}
+                  style={{ background: isActive ? 'rgba(255,255,255,.8)' : pfc.c }}
                 ></div>
                 {pfc.n || k}
                 <span className="ck">✓</span>
               </button>
             );
           })}
-          <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink3)', alignSelf: 'center' }}>
-            {activePF.size}/6
+          <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink3)', alignSelf: 'center', fontWeight: 500 }}>
+            {activePF.size}/{MAX_PF}
           </span>
         </div>
 
         <div className="qrow">
-          <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink3)', letterSpacing: '.06em', fontWeight: 500 }}>
-            TRENDING →
+          <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink3)', letterSpacing: '.06em', fontWeight: 600 }}>
+            🔥 TRENDING →
           </span>
           {QUERIES.map((q) => (
             <button

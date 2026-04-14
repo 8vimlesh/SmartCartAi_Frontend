@@ -7,6 +7,7 @@ import {
   LineElement,
   Title,
   Tooltip,
+  Filler,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { PF } from '../../data';
@@ -17,7 +18,8 @@ ChartJS.register(
   PointElement,
   LineElement,
   Title,
-  Tooltip
+  Tooltip,
+  Filler
 );
 
 export default function ChartCard({ avail, data }) {
@@ -48,12 +50,14 @@ export default function ChartCard({ avail, data }) {
       label: pfc.n || k,
       data: (data.hist[k] || []).slice(-chartRange).map((h) => h.p),
       borderColor: pfc.c || '#444',
-      backgroundColor: 'transparent',
+      backgroundColor: `${pfc.c || '#444'}10`,
       borderWidth: 2.5,
       pointRadius: 0,
-      pointHoverRadius: 5,
-      pointHoverBackgroundColor: pfc.c || '#444',
-      fill: false,
+      pointHoverRadius: 6,
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: pfc.c || '#444',
+      pointHoverBorderWidth: 3,
+      fill: true,
       tension: 0.4,
       hidden: hidDS.has(k),
     };
@@ -69,20 +73,23 @@ export default function ChartCard({ avail, data }) {
       legend: { display: false },
       tooltip: {
         backgroundColor: '#fff',
-        borderColor: 'rgba(0,0,0,.12)',
-        borderWidth: 1.5,
-        titleColor: '#757575',
+        borderColor: 'rgba(0,0,0,.1)',
+        borderWidth: 1,
+        titleColor: '#6b6b6b',
         bodyColor: '#0d0d0d',
-        titleFont: { family: "'Azeret Mono'", size: 10 },
-        bodyFont: { family: "'Azeret Mono'", size: 12 },
-        padding: 12,
+        titleFont: { family: "'DM Mono', monospace", size: 12, weight: '500' },
+        bodyFont: { family: "'DM Mono', monospace", size: 14, weight: '600' },
+        padding: { top: 14, bottom: 14, left: 16, right: 16 },
+        cornerRadius: 12,
+        boxPadding: 6,
+        usePointStyle: true,
         callbacks: {
           title: (i) => `📅 ${i[0].label}`,
-          label: (c) => `${c.dataset.label}: ₹${c.parsed.y.toLocaleString('en-IN')}`,
+          label: (c) => ` ${c.dataset.label}: ₹${c.parsed.y.toLocaleString('en-IN')}`,
           footer: (items) => {
             const v = items.filter((i) => !i.dataset.hidden).map((i) => i.parsed.y);
             return v.length > 1
-              ? `Spread: ₹${(Math.max(...v) - Math.min(...v)).toLocaleString('en-IN')}`
+              ? `\nSpread: ₹${(Math.max(...v) - Math.min(...v)).toLocaleString('en-IN')}`
               : '';
           },
         },
@@ -90,22 +97,29 @@ export default function ChartCard({ avail, data }) {
     },
     scales: {
       x: {
-        grid: { color: 'rgba(0,0,0,.04)' },
-        ticks: { color: '#b8b8b8', font: { family: "'Azeret Mono'", size: 10 }, maxRotation: 0, maxTicksLimit: 8 },
+        grid: { color: 'rgba(0,0,0,.04)', drawBorder: false },
+        ticks: {
+          color: '#6b6b6b',
+          font: { family: "'DM Mono', monospace", size: 12, weight: '500' },
+          maxRotation: 0,
+          maxTicksLimit: 7,
+          padding: 8,
+        },
+        border: { display: false },
       },
       y: {
         position: 'right',
-        grid: { color: 'rgba(0,0,0,.04)' },
+        grid: { color: 'rgba(0,0,0,.04)', drawBorder: false },
         ticks: {
-          color: '#b8b8b8',
-          font: { family: "'Azeret Mono'", size: 10 },
+          color: '#6b6b6b',
+          font: { family: "'DM Mono', monospace", size: 12, weight: '500' },
+          padding: 12,
           callback: (v) => {
-            if (v < 1000) {
-              return `₹${v}`;
-            }
+            if (v < 1000) return `₹${v}`;
             return '₹' + (v >= 100000 ? (v / 100000).toFixed(1) + 'L' : (v / 1000).toFixed(v >= 10000 ? 0 : 1) + 'K');
           },
         },
+        border: { display: false },
       },
     },
   };
@@ -120,12 +134,18 @@ export default function ChartCard({ avail, data }) {
   return (
     <div className="chart-card" style={{ display: 'block' }}>
       <div className="chart-hd">
-        <span className="chart-hd-title">{chartRange}-Day Price Trend</span>
+        <span className="chart-hd-title">📈 {chartRange}-Day Price Trend</span>
         <div className="chart-right">
           <div className="range-tabs">
-            <button className={`rtab ${chartRange === 7 ? 'on' : ''}`} onClick={() => setChartRange(7)}>7D</button>
-            <button className={`rtab ${chartRange === 14 ? 'on' : ''}`} onClick={() => setChartRange(14)}>14D</button>
-            <button className={`rtab ${chartRange === 30 ? 'on' : ''}`} onClick={() => setChartRange(30)}>30D</button>
+            {[7, 14, 30].map((r) => (
+              <button
+                key={r}
+                className={`rtab ${chartRange === r ? 'on' : ''}`}
+                onClick={() => setChartRange(r)}
+              >
+                {r}D
+              </button>
+            ))}
           </div>
           <div className="legend">
             {keys.map((k) => {
@@ -152,7 +172,7 @@ export default function ChartCard({ avail, data }) {
           </div>
         </div>
       </div>
-      <div className="chart-body" style={{ height: '300px' }}>
+      <div className="chart-body">
         <Line data={chartData} options={options} />
       </div>
     </div>
