@@ -13,8 +13,14 @@ export default function AIPredictionCard({ data }) {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`/api/predict?product=${encodeURIComponent(data.name)}`);
-        const json = await res.json();
+        const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/predict?product=${encodeURIComponent(data.name)}`);
+        const text = await res.text();
+        let json;
+        try {
+          json = JSON.parse(text);
+        } catch (parseErr) {
+          throw new Error(`Server returned non-JSON response: ${text.substring(0, 30)}...`);
+        }
         if (!res.ok) throw new Error(json.error || 'Failed to predict');
         setInsight(json);
       } catch (err) {

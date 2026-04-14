@@ -17,13 +17,19 @@ export default function AuthModal({ onClose, onLogin }) {
     const payload = isLogin ? { email, password } : { email, password, name };
 
     try {
-      const res = await fetch(url, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}${url}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (parseErr) {
+        throw new Error(`Server returned non-JSON response (Setup issue or Backend down): ${text.substring(0, 30)}...`);
+      }
       
       if (!res.ok) {
         throw new Error(data.error || 'Authentication failed');

@@ -29,7 +29,7 @@ export default function AlertsCard({ avail, data }) {
         }
 
         try {
-          await fetch('/api/alert', {
+          await fetch(`${import.meta.env.VITE_API_URL || ''}/api/alert`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
