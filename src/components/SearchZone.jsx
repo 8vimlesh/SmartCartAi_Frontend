@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { PKS, PF } from '../data';
+import React, { useState } from "react";
+import { PKS, PF } from "../data";
 
 const QUERIES = [
-  'Sony WH-1000XM5',
-  'Nike Air Force 1',
-  'Apple iPhone 15',
-  'boAt Airdopes 141',
-  'Samsung Galaxy S24',
-  'Dyson Airwrap',
-  'Lakme lipstick',
-  'JBL speaker',
+  "Sony WH-1000XM5",
+  "Nike Air Force 1",
+  "Apple iPhone 15",
+  "boAt Airdopes 141",
+  "Samsung Galaxy S24",
+  "Dyson Airwrap",
+  "Lakme lipstick",
+  "JBL speaker",
 ];
 
 export default function SearchZone({ activePF, togglePF, onSearch }) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const MAX_PF = 6;
 
   const handleSearch = () => {
@@ -23,7 +23,7 @@ export default function SearchZone({ activePF, togglePF, onSearch }) {
   };
 
   const clearQuery = () => {
-    setQuery('');
+    setQuery("");
   };
 
   return (
@@ -37,14 +37,14 @@ export default function SearchZone({ activePF, togglePF, onSearch }) {
             placeholder="Search any product — headphones, shoes, phone, makeup…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             id="search-input"
           />
           {query && (
             <button
               type="button"
               className="search-clr"
-              style={{ display: 'flex' }}
+              style={{ display: "flex" }}
               onClick={clearQuery}
               aria-label="Clear search"
             >
@@ -64,26 +64,44 @@ export default function SearchZone({ activePF, togglePF, onSearch }) {
             return (
               <button
                 key={k}
-                className={`pfbtn ${isActive ? 'on' : ''}`}
+                className={`pfbtn ${isActive ? "on" : ""}`}
                 style={{ backgroundColor: isActive ? pfc.c : undefined }}
                 onClick={() => togglePF(k)}
               >
                 <div
                   className="dot"
-                  style={{ background: isActive ? 'rgba(255,255,255,.8)' : pfc.c }}
+                  style={{
+                    background: isActive ? "rgba(255,255,255,.8)" : pfc.c,
+                  }}
                 ></div>
                 {pfc.n || k}
                 <span className="ck">✓</span>
               </button>
             );
           })}
-          <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink3)', alignSelf: 'center', fontWeight: 500 }}>
+          <span
+            style={{
+              fontFamily: "var(--mono)",
+              fontSize: 11,
+              color: "var(--ink3)",
+              alignSelf: "center",
+              fontWeight: 500,
+            }}
+          >
             {activePF.size}/{MAX_PF}
           </span>
         </div>
 
         <div className="qrow">
-          <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink3)', letterSpacing: '.06em', fontWeight: 600 }}>
+          <span
+            style={{
+              fontFamily: "var(--mono)",
+              fontSize: 11,
+              color: "var(--ink3)",
+              letterSpacing: ".06em",
+              fontWeight: 600,
+            }}
+          >
             🔥 TRENDING →
           </span>
           {QUERIES.map((q) => (
@@ -97,7 +115,7 @@ export default function SearchZone({ activePF, togglePF, onSearch }) {
               }}
               aria-label={`Search ${q}`}
             >
-              {q.replace('Apple ', '').replace('Samsung ', '')}
+              {q.replace("Apple ", "").replace("Samsung ", "")}
             </button>
           ))}
         </div>

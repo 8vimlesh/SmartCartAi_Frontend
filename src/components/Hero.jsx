@@ -1,5 +1,5 @@
-import React from 'react';
-import { DEMO, PF } from '../data';
+import React from "react";
+import { DEMO, PF } from "../data";
 
 export default function Hero({ onDealClick = () => {} }) {
   const deals = Object.entries(DEMO)
@@ -16,7 +16,7 @@ export default function Hero({ onDealClick = () => {} }) {
         em: p.em,
         pfKey: bk,
         pfName: pfc.n || bk,
-        pfColor: pfc.c || 'var(--ink)',
+        pfColor: pfc.c || "var(--ink)",
         disc: bd.disc || 0,
         price: bd.p,
       };
@@ -27,12 +27,23 @@ export default function Hero({ onDealClick = () => {} }) {
     <section className="hero">
       <div className="hero-left">
         <div className="hero-label">
-          <span style={{ animation: 'pulseGlow 2s infinite', width: '6px', height: '6px', borderRadius: '50%', background: 'var(--primary)', display: 'inline-block' }}></span>
+          <span
+            style={{
+              animation: "pulseGlow 2s infinite",
+              width: "6px",
+              height: "6px",
+              borderRadius: "50%",
+              background: "var(--primary)",
+              display: "inline-block",
+            }}
+          ></span>
           India's #1 Price Comparator
         </div>
         <h1 className="hero-h1">
-          Compare prices<br />
-          across <em>every</em><br />
+          Compare prices
+          <br />
+          across <em>every</em>
+          <br />
           platform
         </h1>
         <p className="hero-sub">
@@ -49,7 +60,9 @@ export default function Hero({ onDealClick = () => {} }) {
             <div className="hstat-l">TO USE</div>
           </div>
           <div className="hstat">
-            <div className="hstat-n" style={{ color: 'var(--green)' }}>LIVE</div>
+            <div className="hstat-n" style={{ color: "var(--green)" }}>
+              LIVE
+            </div>
             <div className="hstat-l">PRICES</div>
           </div>
         </div>
@@ -75,13 +88,16 @@ export default function Hero({ onDealClick = () => {} }) {
                 {deal.pfName} · {deal.disc}% off
               </div>
             </div>
-            <div className="hero-deal-price" style={{ 
-              background: 'var(--grn-s)', 
-              padding: '3px 10px', 
-              borderRadius: '8px',
-              border: '1px solid var(--grn-b)'
-            }}>
-              ₹{deal.price.toLocaleString('en-IN')}
+            <div
+              className="hero-deal-price"
+              style={{
+                background: "var(--grn-s)",
+                padding: "3px 10px",
+                borderRadius: "8px",
+                border: "1px solid var(--grn-b)",
+              }}
+            >
+              ₹{deal.price.toLocaleString("en-IN")}
             </div>
           </button>
         ))}
